@@ -1,4 +1,7 @@
 spring:
+  jms:
+    listener:
+      acknowledge-mode: auto
   artemis:
     host: localhost
     user: capp
@@ -13,5 +16,5 @@ spike:
   event-consumer: ${event-consumer:false}
   customer-consumer: ${customer-consumer:false}
   queue-name:
-    event-update: capp.queue.eventupdate
-    customer-update: capp.queue.customerupdate
+    event-update: capp.topic.eventupdate
+    customer-update: asdasfdwrwer

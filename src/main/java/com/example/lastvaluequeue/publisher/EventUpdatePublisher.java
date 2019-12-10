@@ -41,13 +41,13 @@ public class EventUpdatePublisher {
             IntStream.rangeClosed(1, 100)
                     .forEach(number -> {
                         Random rand = new Random();
-                        int value = rand.nextInt(50);
+                        int value = rand.nextInt(5);
                         String name = nameList[rand.nextInt(nameList.length)];
                         String category = categoryList[rand.nextInt(categoryList.length)];
 
                         Event event = Event.builder().id(value).name(name).category(category).build();
 
-                        jmsTemplate.convertAndSend(eventUpdateQueueName, event);
+                        jmsTemplate.convertAndSend(eventUpdateQueueName + eventUpdateLastValueQueueConfig, event);
 
                         jmsTemplate.convertAndSend(eventUpdateQueueName + eventUpdateLastValueQueueConfig, event, message -> {
                             message.setIntProperty("Id", event.getId());
@@ -57,7 +57,7 @@ public class EventUpdatePublisher {
                         log.info("Event message published for event: {}", event);
 
                         try {
-                            TimeUnit.SECONDS.sleep(15);
+                            TimeUnit.SECONDS.sleep(5);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
