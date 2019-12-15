@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.annotation.JmsListenerConfigurer;
-import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
 import org.springframework.jms.config.JmsListenerEndpointRegistrar;
 import org.springframework.jms.config.SimpleJmsListenerEndpoint;
 import org.springframework.stereotype.Component;
@@ -20,10 +19,7 @@ import javax.jms.TextMessage;
 @RequiredArgsConstructor
 public class CustomerSubscriber implements JmsListenerConfigurer {
 
-    public String customerUpdateLastValueQueueConfig = "?last-value-key=Id&non-destructive=true";
-
     private final ObjectMapper objectMapper;
-    private final DefaultJmsListenerContainerFactory artemisTopicJmsListenerContainerFactory;
 
     @Value("${spike.customer-consumer}")
     private boolean isCustomerConsumer;
@@ -39,7 +35,7 @@ public class CustomerSubscriber implements JmsListenerConfigurer {
         if (isCustomerConsumer) {
             SimpleJmsListenerEndpoint endpoint = new SimpleJmsListenerEndpoint();
             endpoint.setId("customerUpdateQueueName");
-            endpoint.setDestination(customerUpdateQueueName + customerUpdateLastValueQueueConfig);
+            endpoint.setDestination(customerUpdateQueueName);
             endpoint.setMessageListener(message -> {
                 if (message instanceof TextMessage) {
                     try {
@@ -54,11 +50,7 @@ public class CustomerSubscriber implements JmsListenerConfigurer {
                 }
             });
             registrar.registerEndpoint(endpoint);
-//            registrar.setContainerFactory(artemisTopicJmsListenerContainerFactory);
-
             log.info("Started listening to Customer update");
         }
-
-
     }
 }

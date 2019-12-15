@@ -21,7 +21,6 @@ import static com.example.lastvaluequeue.config.QueueConfig.customerUpdateLastVa
 public class CustomerUpdatePublisher {
 
     private final JmsTemplate jmsTemplate;
-    private final JmsTemplate artemisTopicJmsTemplate;
 
     private static String[] nameList = {"AAA", "BBB", "CCC", "DDD"};
     private static String[] serviceList = {"SERVICE 1", "SERVICE 2", "SERVICE 3", "SERVICE 4", "SERVICE 5"};
@@ -52,7 +51,13 @@ public class CustomerUpdatePublisher {
                             return message;
                         });
 
-                        artemisTopicJmsTemplate.convertAndSend(customerUpdateQueueName + customerUpdateLastValueQueueConfig, customer);
+                        try {
+                            TimeUnit.MILLISECONDS.sleep(200);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        jmsTemplate.convertAndSend(customerUpdateQueueName, customer);
 
                         log.info("Customer message published for customer: {}", customer);
 

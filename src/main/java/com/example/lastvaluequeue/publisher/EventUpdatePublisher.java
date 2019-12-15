@@ -47,12 +47,18 @@ public class EventUpdatePublisher {
 
                         Event event = Event.builder().id(value).name(name).category(category).build();
 
-                        jmsTemplate.convertAndSend(eventUpdateQueueName + eventUpdateLastValueQueueConfig, event);
-
                         jmsTemplate.convertAndSend(eventUpdateQueueName + eventUpdateLastValueQueueConfig, event, message -> {
                             message.setIntProperty("Id", event.getId());
                             return message;
                         });
+
+                        try {
+                            TimeUnit.SECONDS.sleep(1);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        jmsTemplate.convertAndSend(eventUpdateQueueName + eventUpdateLastValueQueueConfig, event);
 
                         log.info("Event message published for event: {}", event);
 
